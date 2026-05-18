@@ -1,0 +1,49 @@
+# SYSTEM FILES
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# NODE MODULES
+node_modules/
+
+# LOG FILES
+*.log
+logs/
+
+# ENV FILES
+.env
+.env.local
+.env.production
+
+# BUILD FILES
+dist/
+build/
+.cache/
+
+# IDE FILES
+.vscode/
+.idea/
+
+# TEMP FILES
+*.tmp
+*.temp
+
+# PACKAGE MANAGERS
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# COVERAGE
+coverage/
+
+# DEPLOYMENT
+.vercel/
+.netlify/
+.firebase/
+
+# PYTHON
+__pycache__/
+*.pyc
+
+# GENERATED FILES
+*.map

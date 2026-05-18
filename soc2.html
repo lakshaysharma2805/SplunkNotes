@@ -1,0 +1,795 @@
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Splunk Mastery | SOC Notes</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    display:flex;
+    background:radial-gradient(circle at top,#07152d 0%, #020817 45%, #01040d 100%);
+    color:#d6e2ff;
+    font-family:'JetBrains Mono', monospace;
+    overflow:hidden;
+}
+
+.sidebar{
+    width:270px;
+    height:100vh;
+    background:rgba(5,12,25,0.95);
+    backdrop-filter:blur(18px);
+    border-right:1px solid rgba(0,255,174,0.08);
+    position:fixed;
+    left:0;
+    top:0;
+    overflow-y:auto;
+    padding-bottom:40px;
+    box-shadow:0 0 40px rgba(0,0,0,0.45);
+}
+
+.logo{
+    padding:50px 30px;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.logo h1{
+    font-family:'Orbitron', sans-serif;
+    color:#00ffae;
+    font-size:2rem;
+    margin-bottom:12px;
+}
+
+.logo p{
+    color:#7f92b0;
+    letter-spacing:5px;
+    font-size:0.8rem;
+}
+
+.nav-links{
+    margin-top:30px;
+}
+
+.nav-links a{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px 24px;
+    text-decoration:none;
+    color:#8ea4c3;
+    font-size:0.96rem;
+    transition:0.3s;
+    border-left:3px solid transparent;
+    margin:4px 10px;
+    border-radius:12px;
+}
+
+.nav-links a:hover{
+    background:linear-gradient(to right,rgba(0,255,174,0.12),transparent);
+    color:#00ffae;
+    border-left:3px solid #00ffae;
+    padding-left:30px;
+}
+
+.main{
+    margin-left:270px;
+    width:calc(100% - 270px);
+    height:100vh;
+    overflow-y:auto;
+    padding:30px 35px 80px 35px;
+}
+
+.hero{
+    margin-bottom:55px;
+}
+
+.hero h1{
+    font-size:5.2rem;
+    font-family:'Orbitron', sans-serif;
+    line-height:1.02;
+    margin-bottom:24px;
+    color:#f3f7ff;
+    letter-spacing:-3px;
+    max-width:1100px;
+}
+
+.hero span{
+    color:#00ffae;
+}
+
+.hero p{
+    font-size:1.18rem;
+    color:#93a9c9;
+    max-width:980px;
+    line-height:1.9;
+}
+
+.section{
+    margin-bottom:90px;
+}
+
+.section h2{
+    font-size:2.5rem;
+    margin-bottom:25px;
+    color:#00ffae;
+    font-family:'Orbitron', sans-serif;
+}
+
+.section p{
+    color:#b4c2da;
+    line-height:2;
+    font-size:1.05rem;
+    margin-bottom:25px;
+}
+
+.card-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:18px;
+    margin-top:25px;
+}
+
+.card{
+    background:linear-gradient(145deg,#07111d,#09162a);
+    border:1px solid rgba(255,255,255,0.04);
+    border-radius:22px;
+    padding:24px;
+    transition:0.3s;
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:'';
+    position:absolute;
+    width:180px;
+    height:180px;
+    background:rgba(0,255,174,0.04);
+    border-radius:50%;
+    top:-100px;
+    right:-80px;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    border-color:#00ffae;
+    box-shadow:0 0 25px rgba(0,255,174,0.15);
+}
+
+.card h3{
+    color:#00ffae;
+    margin-bottom:18px;
+    font-size:1.2rem;
+}
+
+.card p{
+    color:#9eb2cc;
+    line-height:1.8;
+}
+
+.query-box{
+    background:#020814;
+    border:1px solid rgba(0,255,174,0.1);
+    padding:18px;
+    border-radius:16px;
+    margin:20px 0;
+    overflow-x:auto;
+    box-shadow:inset 0 0 20px rgba(0,0,0,0.4);
+}
+
+.query-box code{
+    color:#00ffae;
+    font-size:1rem;
+    line-height:2;
+}
+
+.alert{
+    margin-top:25px;
+    background:#0b182c;
+    border:1px solid rgba(0,255,174,0.2);
+    padding:25px;
+    border-radius:16px;
+}
+
+.alert h4{
+    color:#00ffae;
+    margin-bottom:12px;
+}
+
+.mitre-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-top:40px;
+}
+
+.mitre-card{
+    background:#081220;
+    border-radius:18px;
+    padding:25px;
+    border:1px solid rgba(255,255,255,0.04);
+}
+
+.mitre-card h3{
+    color:#00ffae;
+    margin-bottom:12px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:18px;
+    margin-top:35px;
+}
+
+.stat{
+    background:linear-gradient(145deg,#07111f,#0a1628);
+    border-radius:22px;
+    padding:28px;
+    text-align:left;
+    border:1px solid rgba(0,255,174,0.08);
+    transition:0.3s;
+}
+
+.stat:hover{
+    transform:translateY(-5px);
+    border-color:rgba(0,255,174,0.35);
+    box-shadow:0 0 25px rgba(0,255,174,0.08);
+}
+
+.stat h2{
+    color:#00ffae;
+    font-size:2.5rem;
+}
+
+.stat p{
+    margin-top:10px;
+    color:#8ca2bf;
+}
+
+footer a{
+    color:#00ffae;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+footer a:hover{
+    color:white;
+}
+
+@media(max-width:900px){
+
+    body{
+        flex-direction:column;
+        overflow:auto;
+    }
+
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+        padding:40px 25px;
+    }
+
+    .hero h1{
+        font-size:3rem;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+        <h1>Splunk Mastery</h1>
+        <p>FROM ZERO TO HERO</p>
+    </div>
+
+    <div class="nav-links">
+        <a href="#intro">📘 Introduction</a>
+        <a href="#core">🗂 Core Concepts</a>
+        <a href="#architecture">🏗 Splunk Architecture</a>
+        <a href="#spl">💻 SPL Fundamentals</a>
+        <a href="#spllanguage">🧠 Search Processing Language</a>
+        <a href="#eventids">🪟 Windows Event IDs</a>
+        <a href="#hunting">🎯 Threat Hunting</a>
+        <a href="#detection">🛡 Detection Engineering</a>
+        <a href="#mitre">🛡 MITRE Framework</a>
+        <a href="#workflow">📊 SOC Workflow</a>
+        <a href="#cheatsheet">⚡ SPL Cheat Sheet</a>
+        <a href="#tips">💡 Pro Tips</a>
+    </div>
+
+</div>
+
+<div class="main">
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;padding:0 5px;">
+</div>
+
+<section class="hero" id="intro">
+
+<h1>Welcome to <span>Splunk Mastery</span></h1>
+
+<p>
+Your complete SOC analyst learning hub for Splunk, threat hunting,
+detection engineering, MITRE ATT&CK, Windows Event IDs,
+and real-world analyst workflows.
+</p>
+
+<div class="stats">
+
+<div class="stat">
+<h2>50+</h2>
+<p>Real-World Cases</p>
+</div>
+
+<div class="stat">
+<h2>120+</h2>
+<p>SPL Queries</p>
+</div>
+
+<div class="stat">
+<h2>40+</h2>
+<p>Windows Event IDs</p>
+</div>
+
+<div class="stat">
+<h2>25+</h2>
+<p>Detection Notes</p>
+</div>
+
+<div class="stat">
+<h2>10+</h2>
+<p>MITRE Tactics</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="section" id="core">
+<h2>What is Splunk?</h2>
+<p>
+Splunk is a SIEM and log analysis platform used by SOC analysts,
+security engineers, and threat hunters to search, analyze,
+and investigate machine-generated logs.
+</p>
+
+<div class="alert">
+<h4>⚠ Analyst Insight</h4>
+<p>
+Think of Splunk as Google for your infrastructure and security logs.
+Strong search logic directly improves investigations.
+</p>
+</div>
+</section>
+
+<section class="section" id="architecture">
+<h2>Understanding Splunk Architecture</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Forwarder</h3>
+<p>
+Collects logs from endpoints and sends them to the Indexer.
+</p>
+</div>
+
+<div class="card">
+<h3>Indexer</h3>
+<p>
+Processes and stores logs while handling search operations.
+</p>
+</div>
+
+<div class="card">
+<h3>Search Head</h3>
+<p>
+Used by analysts to perform searches, create dashboards,
+and investigate alerts.
+</p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="spl">
+<h2>SPL Fundamentals</h2>
+
+<div class="query-box">
+<code>
+index=wineventlog EventCode=4625
+| stats count by user, src_ip
+</code>
+</div>
+
+<p>
+Detects repeated failed login attempts and possible brute-force attacks.
+</p>
+
+<div class="alert">
+<h4>🎯 IRL SOC Workflow</h4>
+<p>
+Analysts investigate IP reputation, MFA activity,
+user history, and authentication timelines.
+</p>
+</div>
+</section>
+
+<section class="section" id="spllanguage">
+<h2>Search Processing Language (SPL)</h2>
+
+<p>
+Search Processing Language (SPL) is the core language used inside Splunk
+for searching, filtering, transforming, and analyzing logs.
+Understanding SPL is one of the most important skills for SOC analysts,
+threat hunters, and detection engineers.
+</p>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Task 2 — Search & Reporting</h3>
+<p>
+Learn how to search indexes, retrieve events,
+and build reports from machine-generated logs.
+</p>
+
+<div class="query-box">
+<code>
+index=main
+</code>
+</div>
+</div>
+
+<div class="card">
+<h3>Task 3 — Search Operators</h3>
+<p>
+Use Boolean operators like AND, OR, and NOT
+for advanced filtering and precise searches.
+</p>
+
+<div class="query-box">
+<code>
+index=main error OR failure
+</code>
+</div>
+</div>
+
+<div class="card">
+<h3>Task 4 — Filtering Results</h3>
+<p>
+Filter unnecessary noise and focus only on
+relevant events during investigations.
+</p>
+
+<div class="query-box">
+<code>
+index=main status=failed
+</code>
+</div>
+</div>
+
+<div class="card">
+<h3>Task 5 — Structuring Results</h3>
+<p>
+Structure results using commands like table,
+fields, rename, and sort.
+</p>
+
+<div class="query-box">
+<code>
+| table user src_ip EventCode
+</code>
+</div>
+</div>
+
+<div class="card">
+<h3>Task 6 — Transforming Commands</h3>
+<p>
+Transform raw logs into meaningful statistics
+and visualized information.
+</p>
+
+<div class="query-box">
+<code>
+| stats count by user
+</code>
+</div>
+</div>
+
+<div class="card">
+<h3>Task 7 — Anomaly Detection</h3>
+<p>
+Detect unusual behaviors, spikes, suspicious patterns,
+and abnormal activity across systems.
+</p>
+
+<div class="query-box">
+<code>
+| rare process_name
+</code>
+</div>
+</div>
+
+</div>
+
+<div class="alert">
+<h4>⚡ Why SPL Matters</h4>
+<p>
+Strong SPL skills directly improve investigations,
+incident response, detection engineering,
+and threat hunting efficiency.
+</p>
+</div>
+</section>
+
+<section class="section" id="eventids">
+<h2>Important Windows Event IDs</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>4624 — Successful Login</h3>
+<p>Tracks successful authentication events.</p>
+</div>
+
+<div class="card">
+<h3>4625 — Failed Login</h3>
+<p>Useful for brute-force detection and password spraying analysis.</p>
+</div>
+
+<div class="card">
+<h3>4688 — Process Creation</h3>
+<p>Critical for identifying suspicious processes and malware execution.</p>
+</div>
+
+<div class="card">
+<h3>4104 — PowerShell Logs</h3>
+<p>Captures PowerShell execution activity.</p>
+</div>
+
+<div class="card">
+<h3>7045 — Service Installed</h3>
+<p>Detects malicious service installation attempts.</p>
+</div>
+
+<div class="card">
+<h3>4720 — User Account Created</h3>
+<p>Helps identify unauthorized account creation.</p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="hunting">
+<h2>Threat Hunting Basics</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Rare Processes</h3>
+<div class="query-box">
+<code>
+index=wineventlog EventCode=4688
+| rare process_name
+</code>
+</div>
+<p>Find uncommon processes running inside the environment.</p>
+</div>
+
+<div class="card">
+<h3>Suspicious Parent-Child Relationships</h3>
+<div class="query-box">
+<code>
+parent_process="WINWORD.EXE"
+process_name="powershell.exe"
+</code>
+</div>
+<p>Detects suspicious Office-to-PowerShell execution chains.</p>
+</div>
+
+<div class="card">
+<h3>Encoded PowerShell</h3>
+<div class="query-box">
+<code>
+powershell.exe "*EncodedCommand*"
+</code>
+</div>
+<p>Detects obfuscated PowerShell commands.</p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="detection">
+<h2>Detection Engineering</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>False Positives</h3>
+<p>
+Not every alert is malicious.
+Detection tuning is essential.
+</p>
+</div>
+
+<div class="card">
+<h3>Correlation</h3>
+<p>
+Strong detections combine process logs,
+authentication logs, and network activity.
+</p>
+</div>
+
+<div class="card">
+<h3>Detection Lifecycle</h3>
+<p>
+Hypothesis → Testing → Tuning → Deployment → Monitoring.
+</p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="mitre">
+<h2>MITRE ATT&CK Framework</h2>
+
+<div class="mitre-grid">
+
+<div class="mitre-card">
+<h3>T1059 — Command Execution</h3>
+<p>Attackers execute malicious commands using PowerShell or CMD.</p>
+</div>
+
+<div class="mitre-card">
+<h3>T1110 — Brute Force</h3>
+<p>Repeated password attempts against accounts.</p>
+</div>
+
+<div class="mitre-card">
+<h3>T1547 — Persistence</h3>
+<p>Maintaining access after reboot or logout.</p>
+</div>
+
+<div class="mitre-card">
+<h3>T1021 — Remote Services</h3>
+<p>Using RDP, SMB, SSH, or WinRM for lateral movement.</p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="workflow">
+<h2>SOC Investigation Workflow</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>1. Alert Validation</h3>
+<p>Determine whether the alert is legitimate.</p>
+</div>
+
+<div class="card">
+<h3>2. Context Gathering</h3>
+<p>Collect user, hostname, IP, and process details.</p>
+</div>
+
+<div class="card">
+<h3>3. Correlation</h3>
+<p>Correlate authentication, process, DNS, and network logs.</p>
+</div>
+
+<div class="card">
+<h3>4. Escalation</h3>
+<p>Escalate confirmed malicious activity to IR teams.</p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="cheatsheet">
+<h2>SPL Cheat Sheet</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>table</h3>
+<div class="query-box">
+<code>| table user src_ip process_name</code>
+</div>
+<p>Displays selected fields only.</p>
+</div>
+
+<div class="card">
+<h3>sort</h3>
+<div class="query-box">
+<code>| sort - count</code>
+</div>
+<p>Sorts results in descending order.</p>
+</div>
+
+<div class="card">
+<h3>dedup</h3>
+<div class="query-box">
+<code>| dedup user</code>
+</div>
+<p>Removes duplicate values.</p>
+</div>
+
+<div class="card">
+<h3>timechart</h3>
+<div class="query-box">
+<code>| timechart count by EventCode</code>
+</div>
+<p>Visualizes trends over time.</p>
+</div>
+
+</div>
+</section>
+
+<section class="section" id="tips">
+<h2>Pro Tips</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Learn Event IDs</h3>
+<p>Windows logs are foundational for SOC investigations.</p>
+</div>
+
+<div class="card">
+<h3>Filter Noise</h3>
+<p>Understanding normal behavior helps reduce false positives.</p>
+</div>
+
+<div class="card">
+<h3>Think Like an Attacker</h3>
+<p>Understanding attacker workflows improves detections.</p>
+</div>
+
+</div>
+</section>
+
+<footer>
+    <p>
+        © 2026 
+        <a href="https://github.com/lakshaysharma2805" target="_blank">
+            Lakshay Sharma
+        </a>
+        — All Rights Reserved
+    </p>
+</footer>
+
+</div>
+
+</body>
+</html>
+```
